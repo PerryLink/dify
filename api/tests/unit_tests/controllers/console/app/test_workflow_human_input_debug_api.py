@@ -232,7 +232,7 @@ def test_human_input_delivery_test_maps_validation_error(app: Flask, monkeypatch
             method="POST",
             json={"delivery_method_id": "bad"},
         ),
-        pytest.raises(ValueError),
+        pytest.raises(ValueError, match="bad delivery method"),
     ):
         workflow_module.WorkflowDraftHumanInputDeliveryTestApi().post(app_id=app_model.id, node_id="node-1")
 

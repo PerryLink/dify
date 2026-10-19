@@ -240,7 +240,7 @@ class TestTriggerSubscriptionBuilderApis:
                 "controllers.console.workspace.trigger_providers.TriggerSubscriptionBuilderService.update_and_verify_builder",
                 side_effect=Exception("err"),
             ),
-            pytest.raises(ValueError),
+            pytest.raises(ValueError, match="err"),
         ):
             method(
                 api,
@@ -521,7 +521,7 @@ class TestTriggerOAuthApis:
                 "controllers.console.workspace.trigger_providers.OAuthHandler.get_credentials",
                 return_value=MagicMock(credentials=None, expires_at=None),
             ),
-            pytest.raises(ValueError),
+            pytest.raises(ValueError, match="Failed to get OAuth credentials from the provider\\."),
         ):
             method(api, "github")
 

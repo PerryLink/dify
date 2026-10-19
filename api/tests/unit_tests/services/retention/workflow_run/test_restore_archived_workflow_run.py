@@ -637,7 +637,7 @@ class TestRestoreFromRun:
 
         run = WorkflowRunRestoreTestDataFactory.create_workflow_run()
 
-        with patch("services.retention.workflow_run.restore_archived_workflow_run.click") as mock_click:
+        with patch("services.retention.workflow_run.restore_archived_workflow_run.click"):
             result = restore._restore_from_run(run, session_maker=database.session_maker)
 
         assert result.success is False
@@ -654,7 +654,7 @@ class TestRestoreFromRun:
 
         run = WorkflowRunRestoreTestDataFactory.create_workflow_run()
 
-        with patch("services.retention.workflow_run.restore_archived_workflow_run.click") as mock_click:
+        with patch("services.retention.workflow_run.restore_archived_workflow_run.click"):
             result = restore._restore_from_run(run, session_maker=database.session_maker)
 
         assert result.success is False
@@ -703,7 +703,7 @@ class TestRestoreFromRun:
             )
             mock_get_repo.return_value = mock_repo
 
-            with patch("services.retention.workflow_run.restore_archived_workflow_run.click") as mock_click:
+            with patch("services.retention.workflow_run.restore_archived_workflow_run.click"):
                 result = restore._restore_from_run(run, session_maker=database.session_maker)
 
         assert result.success is True
@@ -751,7 +751,7 @@ class TestRestoreFromRun:
 
         run = WorkflowRunRestoreTestDataFactory.create_workflow_run()
 
-        with patch("services.retention.workflow_run.restore_archived_workflow_run.click") as mock_click:
+        with patch("services.retention.workflow_run.restore_archived_workflow_run.click"):
             result = restore._restore_from_run(run, session_maker=database.session_maker)
 
         assert result.success is False
@@ -827,7 +827,7 @@ class TestRestoreBatch:
         with (
             patch.object(restore, "_get_workflow_run_repo", return_value=mock_repo),
             patch.object(restore, "_restore_from_run", side_effect=[result1, result2]),
-            patch("services.retention.workflow_run.restore_archived_workflow_run.click") as mock_click,
+            patch("services.retention.workflow_run.restore_archived_workflow_run.click"),
         ):
             results = restore.restore_batch(
                 tenant_ids=["tenant-1"],
@@ -862,7 +862,7 @@ class TestRestoreBatch:
         with (
             patch.object(restore, "_get_workflow_run_repo", return_value=mock_repo),
             patch.object(restore, "_restore_from_run", return_value=result),
-            patch("services.retention.workflow_run.restore_archived_workflow_run.click") as mock_click,
+            patch("services.retention.workflow_run.restore_archived_workflow_run.click"),
         ):
             results = restore.restore_batch(
                 tenant_ids=["tenant-1"],
@@ -891,7 +891,7 @@ class TestRestoreByRunId:
 
         with (
             patch.object(restore, "_get_workflow_run_repo", return_value=mock_repo),
-            patch("services.retention.workflow_run.restore_archived_workflow_run.click") as mock_click,
+            patch("services.retention.workflow_run.restore_archived_workflow_run.click"),
         ):
             result = restore.restore_by_run_id("nonexistent-run")
 
@@ -914,7 +914,7 @@ class TestRestoreByRunId:
         with (
             patch.object(restore, "_get_workflow_run_repo", return_value=mock_repo),
             patch.object(restore, "_restore_from_run", return_value=result),
-            patch("services.retention.workflow_run.restore_archived_workflow_run.click") as mock_click,
+            patch("services.retention.workflow_run.restore_archived_workflow_run.click"),
         ):
             actual_result = restore.restore_by_run_id("run-1")
 
@@ -936,7 +936,7 @@ class TestRestoreByRunId:
         with (
             patch.object(restore, "_get_workflow_run_repo", return_value=mock_repo),
             patch.object(restore, "_restore_from_run", return_value=result),
-            patch("services.retention.workflow_run.restore_archived_workflow_run.click") as mock_click,
+            patch("services.retention.workflow_run.restore_archived_workflow_run.click"),
         ):
             actual_result = restore.restore_by_run_id("run-1")
 

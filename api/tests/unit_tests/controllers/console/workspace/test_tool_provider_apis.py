@@ -309,7 +309,7 @@ class TestBuiltinProviderApis:
 
         with (
             app.test_request_context("/", json={"credentials": empty_mapping(), "type": "invalid"}),
-            pytest.raises(ValueError),
+            pytest.raises(ValueError, match="1 validation error for BuiltinToolAddPayload\\\ntype"),
         ):
             method(
                 api,
@@ -609,7 +609,16 @@ class TestWorkflowApis:
         api = ToolWorkflowProviderGetApi()
         method = unwrap(api.get)
 
-        with app.test_request_context("/"), pytest.raises(ValueError):
+        with (
+            app.test_request_context("/"),
+            pytest.raises(
+                ValueError,
+                match=(
+                    "1 validation error for WorkflowToolGetQuery\\\n  Value error, "
+                    "workflow_tool_id or workflow_app_id is required"
+                ),
+            ),
+        ):
             method(api, "t", make_account())
 
 

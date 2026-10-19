@@ -551,7 +551,10 @@ class TestPluginRuntimeErrorHandling:
 
         with patch("httpx.request", return_value=mock_response, autospec=True):
             # Act & Assert
-            with pytest.raises(Exception) as exc_info:
+            with pytest.raises(
+                Exception,
+                match=("got unknown error from plugin daemon: UnknownErrorType, message: Unknown error occurred"),
+            ) as exc_info:
                 plugin_client._request_with_plugin_daemon_response("POST", "plugin/test-tenant/test", bool)
             assert "got unknown error from plugin daemon" in str(exc_info.value)
 
@@ -576,7 +579,7 @@ class TestPluginRuntimeErrorHandling:
 
         with patch("httpx.request", return_value=mock_response, autospec=True):
             # Act & Assert
-            with pytest.raises(ValueError) as exc_info:
+            with pytest.raises(ValueError, match="got empty data from plugin daemon") as exc_info:
                 plugin_client._request_with_plugin_daemon_response("GET", "plugin/test-tenant/test", bool)
             assert "got empty data from plugin daemon" in str(exc_info.value)
 
@@ -1000,7 +1003,13 @@ class TestPluginRuntimeEdgeCases:
 
         with (
             patch("httpx.request", return_value=mock_response, autospec=True),
-            pytest.raises(ValueError),
+            pytest.raises(
+                ValueError,
+                match=(
+                    "Failed to parse response from plugin daemon to "
+                    "PluginDaemonBasicResponse \\[bool\\], url: plugin/test\\-tenant/test"
+                ),
+            ),
         ):
             # Act & Assert
             plugin_client._request_with_plugin_daemon_response("GET", "plugin/test-tenant/test", bool)
@@ -1013,7 +1022,13 @@ class TestPluginRuntimeEdgeCases:
 
         with (
             patch("httpx.request", return_value=mock_response, autospec=True),
-            pytest.raises(ValueError),
+            pytest.raises(
+                ValueError,
+                match=(
+                    "Failed to parse response from plugin daemon to "
+                    "PluginDaemonBasicResponse \\[bool\\], url: plugin/test\\-tenant/test"
+                ),
+            ),
         ):
             # Act & Assert
             plugin_client._request_with_plugin_daemon_response("GET", "plugin/test-tenant/test", bool)
@@ -1043,7 +1058,7 @@ class TestPluginRuntimeEdgeCases:
             first_result = next(results)
             assert first_result.value == "valid"
 
-            with pytest.raises(ValueError):
+            with pytest.raises(ValueError, match="\\{invalid json\\}"):
                 next(results)
 
     def test_request_with_bytes_data(self, plugin_client, mock_config):
@@ -1119,7 +1134,7 @@ class TestPluginRuntimeEdgeCases:
 
         with patch("httpx.request", return_value=mock_response, autospec=True):
             # Act & Assert
-            with pytest.raises(ValueError) as exc_info:
+            with pytest.raises(ValueError, match="Plain text error message, code: \\-1") as exc_info:
                 plugin_client._request_with_plugin_daemon_response("GET", "plugin/test-tenant/test", bool)
             assert "Plain text error message" in str(exc_info.value)
 

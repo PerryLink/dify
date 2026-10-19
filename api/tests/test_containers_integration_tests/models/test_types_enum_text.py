@@ -1,3 +1,4 @@
+import re
 from collections.abc import Callable, Iterable
 from enum import StrEnum
 from typing import Any, NamedTuple
@@ -203,7 +204,10 @@ class TestEnumText:
             session.execute(sa.text(insertion_sql))
             session.commit()
 
-        with pytest.raises(ValueError) as exc, Session(engine_with_containers) as session:
+        with (
+            pytest.raises(ValueError, match="'invalid' is not a valid _UserType") as exc,
+            Session(engine_with_containers) as session,
+        ):
             _user = session.scalar(select(_User).where(_User.id == 1).limit(1))
 
         assert str(exc.value) == "'invalid' is not a valid _UserType"
@@ -220,7 +224,10 @@ class TestEnumText:
             session.commit()
 
         for record_id, legacy_value in enumerate(("text-generation", "embeddings", "reranking"), 1):
-            with pytest.raises(ValueError) as exc, Session(engine_with_containers) as session:
+            with (
+                pytest.raises(ValueError, match=re.escape(f"'{legacy_value}' is not a valid ModelType")) as exc,
+                Session(engine_with_containers) as session,
+            ):
                 session.scalar(select(_LegacyModelTypeRecord).where(_LegacyModelTypeRecord.id == record_id))
 
             assert str(exc.value) == f"'{legacy_value}' is not a valid ModelType"

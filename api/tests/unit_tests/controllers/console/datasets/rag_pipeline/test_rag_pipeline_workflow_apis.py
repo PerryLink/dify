@@ -489,7 +489,7 @@ class TestDraftNodeRun:
                 "controllers.console.datasets.rag_pipeline.rag_pipeline_workflow.RagPipelineService",
                 return_value=service,
             ),
-            pytest.raises(ValueError),
+            pytest.raises(ValueError, match="Workflow node execution not found"),
         ):
             method(api, NodeRunRequiredPayload(inputs={}), user, pipeline, "node")
 
@@ -550,7 +550,27 @@ class TestMiscApis:
 
         service = MagicMock()
         recommended_plugins = {
-            "installed_recommended_plugins": [{"id": "p1"}],
+            "installed_recommended_plugins": [
+                {
+                    "id": "p1",
+                    "author": "langgenius",
+                    "name": "p1",
+                    "description": {
+                        "en_US": "Plugin one",
+                        "zh_Hans": "Plugin one",
+                        "pt_BR": "Plugin one",
+                        "ja_JP": "Plugin one",
+                    },
+                    "icon": "/icon.svg",
+                    "label": {
+                        "en_US": "Plugin one",
+                        "zh_Hans": "Plugin one",
+                        "pt_BR": "Plugin one",
+                        "ja_JP": "Plugin one",
+                    },
+                    "type": "builtin",
+                }
+            ],
             "uninstalled_recommended_plugins": [{"id": "p2"}],
         }
         service.get_recommended_plugins.return_value = recommended_plugins
@@ -595,7 +615,7 @@ class TestDefaultBlockConfigApi:
 
         pipeline = make_pipeline()
 
-        with app.test_request_context("/?q=bad-json"), pytest.raises(ValueError):
+        with app.test_request_context("/?q=bad-json"), pytest.raises(ValueError, match="Invalid filters"):
             method(api, DefaultBlockConfigQuery(q="bad-json"), pipeline, "llm")
 
 
