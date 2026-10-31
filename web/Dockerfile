@@ -56,6 +56,9 @@ ENV APP_API_URL=http://127.0.0.1:5001
 ENV MARKETPLACE_API_URL=https://marketplace.dify.ai
 ENV MARKETPLACE_URL=https://marketplace.dify.ai
 ENV PORT=3000
+# Docker sets HOSTNAME to the container ID, and a numeric-looking ID (e.g.
+# 30889528e495) is parsed as an Infinity backlog by Node's net.Server.listen.
+ENV HOSTNAME=0.0.0.0
 ENV EXPERIMENTAL_ENABLE_VINEXT=false
 ENV NEXT_TELEMETRY_DISABLED=1
 
